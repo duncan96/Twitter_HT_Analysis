@@ -23,19 +23,19 @@ colorMat = ['r','g','b','m','c','y'];
 
 TFeatMeans = mean(TweetData);
 TFeatSTD = std(TweetData);
-% 
-%     %scatter sentiment vs wordcount
+ 
+     %scatter sentiment vs wordcount
 fig1 = scatterFeats(TweetData(:,2), TweetData(:,3), 3, ind_lens, Feats(1:2));
 title('Sentiment v Wordcount')
-% 
-%     %scatter time vs num tags
-% fig2 = scatterFeats(TweetData(:,11), TweetData(:,7), 3, ind_lens, [Feats(10), Feats(6)]);
-% 
-%     %histogram over time
-% fig3 = histoClasses(TweetData(:,11), 3, ind_lens, 12);
-% 
-%     %Plot Matrix of Feature Relationships
-% %fig4 = plotMatrixData(TweetData(:,2:11), 3, ind_lens, 10, Feats); %full Data
+ 
+     %scatter time vs num tags    
+fig2 = scatterFeats(TweetData(:,11), TweetData(:,7), 3, ind_lens, [Feats(10), Feats(6)]);
+ 
+     %histogram over time
+fig3 = histoClasses(TweetData(:,11), 3, ind_lens, 12);
+ 
+     %Plot Matrix of Feature Relationships
+fig4 = plotMatrixData(TweetData(:,2:11), 3, ind_lens, 10, Feats); %full Data
 
     %Eliminate Class Labels and low value features QMarks, Month and Year
 Feats_Rev1 = [Feats(1:3), Feats(5:6) , Feats(9:10)];
@@ -44,10 +44,10 @@ fig5 = plotMatrixData(TweetData_Rev1, 3, ind_lens, 7, Feats_Rev1);
 nfeats = nfeats - 3;
 TFeatMeans_Rev1 = mean(TweetData_Rev1);
 TFeatSTD_Rev1 = std(TweetData_Rev1);
-% 
-% %Principal Component Analysis
-%     
-% 
+ 
+    %Principal Component Analysis
+     
+
     %Mean Normalization
 TWDsize = size(TweetData_Rev1);
 TweetDataMN = zeros(size(TweetData_Rev1));
@@ -60,8 +60,8 @@ end
     %Get Matrix Decomposition
 [U , S , V] = svd(TweetDataMN, 0);
 Ur = U * S;
-% 
-%     %Scree Plot
+ 
+     %Scree Plot
 [fig6, weights, cum] = scree(S, 'Twitter Data Scree Plot');
 
     %Loading Vectors
@@ -73,25 +73,25 @@ fig8_2 = scatterClasses(Ur, TweetDataMN, nclasses, ind_lens, [2,3,4], Feats_Rev1
 
 
 %Classifying Density Distribution of Features with Parzen Window
-% fig9 = figure;
-% x = -3:.01:3;
-% m = 1;
-% n = nfeats;
-% hold on;
-% for i = 1:n  
-%     subplot(ceil(n/2),ceil(n/2),m);
-%     hold on;
-%     for j = 2:(nclasses+1)
-%         plot(x, parzen_window_gaussian(TweetDataMN((ind_lens(j-1)+1):ind_lens(j),i), .5, x),colorMat(j-1));
-%         title(Feats_Rev1(i));
-%     end
-%     hold off;
-%     m = m + 2;  
-% end
-% hold off;
+fig9 = figure;
+x = -3:.01:3;
+m = 1;
+n = nfeats;
+hold on;
+for i = 1:n  
+     subplot(ceil(n/2),ceil(n/2),m);
+     hold on;
+     for j = 2:(nclasses+1)
+         plot(x, parzen_window_gaussian(TweetDataMN((ind_lens(j-1)+1):ind_lens(j),i), .5, x),colorMat(j-1));
+         title(Feats_Rev1(i));
+     end
+     hold off;
+     m = m + 2;  
+ end
+hold off;
     
-% % Set up Training and Testing Data
-% %     For Use with Training on Full Dataset
+% Set up Training and Testing Data
+    % For Use with Training on Full Dataset
 m1 = class_lens(1); 
 m2 = class_lens(2);
 m3 = class_lens(3);
@@ -103,7 +103,7 @@ TrainMatrixPCA = [Ur(1:m1, :) ; Ur(m1+1:m1+m2, :) ; Ur(m1+m2+1:m1+m2+m3, :) ];
 TestMatrixPCA = [Ur(m+1:ind_lens(2),:) ; Ur(ind_lens(2)+m+1:ind_lens(3), :) ; Ur(ind_lens(3)+m+1:ind_lens(4), :) ];
 
 
-%   %For Use With Seperate Training and Testing Classes
+   %For Use With Seperate Training and Testing Classes
 % m = 8; %m < 12
 % TrainClasses = [ClassLabels(1:m) ; ClassLabels(ind_lens(2)+1:ind_lens(2)+m) ; ClassLabels(ind_lens(3) + 1:ind_lens(3) + m) ];
 % TrainMatrix = [TweetData_Rev1(1:m, :) ; TweetData_Rev1(ind_lens(2)+1:ind_lens(2)+m, :) ; TweetData_Rev1(ind_lens(3) + 1:ind_lens(3) + m, :) ];
@@ -220,4 +220,5 @@ stem(1:length(l13), group13_PCA);
 title('SVM PC Data Classes 1 & 3');
 hold off;
 
+%Overall Performance of Classification Methods
 performance = [Accuracy_qc1, Accuracy_qc2, 0; Accuracy12,Accuracy23,Accuracy13; Accuracy12_PCA, Accuracy23_PCA, Accuracy13_PCA]
