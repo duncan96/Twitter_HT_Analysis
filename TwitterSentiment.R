@@ -1,12 +1,9 @@
 #install.packages(c('twitter', 'syuzhet', 'tm', 'readr', 'stringr','csv'))
-library(twitteR)
-library(syuzhet)
-library(tm)
-library(readr)
-library(stringr)
-library(csv)
+library(c('twitter', 'syuzhet', 'tm', 'readr', 'stringr','csv'))
 
-#TWITTER APP DATA
+
+#TWITTER API KEY DATA
+#Replace with personal Twitter API 
 CONSUMERKEY<- MYCONSUMERKEY
 CONSUMERSECRET<- MYCONSUMERSECRET
 ACCESSTOKEN<- MYACCESSTOKEN
@@ -25,30 +22,30 @@ runAuth<-function()
 
 suppressWarnings(
     {
-    HappyHashtags <- read_delim("C:/Users/dunca.DESKTOP-I41J7PC/Desktop/CSS 490/Project/Twitter/HappyHashtags.csv", 
+    #Add Filepaths as needed
+    HappyHashtags <- read_delim("HappyHashtags.csv", 
                          " ", escape_double = FALSE, col_names = FALSE, 
                          trim_ws = TRUE)
 
-    SportsHashtags <- read_delim("C:/Users/dunca.DESKTOP-I41J7PC/Desktop/CSS 490/Project/Twitter/SportsHashtags.csv", 
+    SportsHashtags <- read_delim("SportsHashtags.csv", 
                              " ", escape_double = FALSE, col_names = FALSE, 
                              trim_ws = TRUE)
     
-    PoliticalHashtags <- read_delim("C:/Users/dunca.DESKTOP-I41J7PC/Desktop/CSS 490/Project/Twitter/PoliticalHashtags.csv", 
+    PoliticalHashtags <- read_delim("PoliticalHashtags.csv", 
                              " ", escape_double = FALSE, col_names = FALSE, 
                              trim_ws = TRUE)
     }
 )
 
-
-PopClass<-c('#DuckDynasty','#StarWars', '#StarTrek')
 HappyClass <- as.character(unlist(HappyHashtags))
 PoliticalClass <- as.character(unlist(PoliticalHashtags))
 SportsClass <- as.character(unlist(SportsHashtags))
-VideoGamesClass <- c('#CoD')
 
+#AddData of interest for this project
+#Other more useful data for different applications forthcoming
 AddData<-function(classNums, hashTags, numEx)
 {
-  Classes <- c('Sports', 'Politics', 'FunNHappy', 'VideoGames', 'PopCulture')
+  Classes <- c('Sports', 'Politics', 'Happy')
   ClassNum <- c()
   Class <- c()
   Hash <- c()
@@ -64,16 +61,14 @@ AddData<-function(classNums, hashTags, numEx)
   ExMarkCount <- c()
   QMarkCount <- c()
   Sentiment <- c()
-  TagCount <-
+  TagCount <-c()
   Tags <- c()
   for(k in 1:length(classNums))
   {
     hashtag <- switch(classNums[k],
                       '1' = SportsClass[sample(length(SportsClass),hashTags)],
                       '2' = PoliticalClass[sample(length(PoliticalClass),hashTags)],
-                      '3' = HappyClass[sample(length(HappyClass),hashTags)],
-                      '4' = VideoGamesClass[sample(length(VideoGamesClass),hashTags)],
-                      '5' = PopClass[sample(length(PopClass),hashTags)])
+                      '3' = HappyClass[sample(length(HappyClass),hashTags)])
     for(j in 1:length(hashtag))
     {
       tweets<-searchTwitter(hashtag[j], numEx, lang = 'en-us', resultType = "popular")
@@ -106,6 +101,7 @@ AddData<-function(classNums, hashTags, numEx)
       }
     }
   }
+  #Create Data Frame to hold all twitter data 
   TweetData<-data.frame(ClassNum, Class, Hash, Text, Tags, Sentiment, WordCount, CharCount, PeriodCount, QMarkCount, ExMarkCount, TagCount, Year, Month, Day, Time)
   return(TweetData)
 }
@@ -150,6 +146,7 @@ FilteredDataSet<-function(classes = c(1,2,3), numHash = 2, numEach = 2, path = "
   return(FilteredData)
 }
 
+#Create CSV for use in with MatLab Analysis
 toCSV <- function(dataset, path, fileName)
 {
   as.csv(dataset, paste(path, fileName, ".csv"))
